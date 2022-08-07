@@ -1,0 +1,6 @@
+tox
+pytest
+hypothesis
+black
+
+svg2rlg
