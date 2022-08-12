@@ -1,15 +1,19 @@
 import math
 import cmath
-from .polygon import Polygon
+from .polygon import Polygon, RegularPolygon
+from helpers import phi
 
 # References:
 # https://en.wikipedia.org/wiki/Pentagon#Regular_pentagons
 # https://archive.lib.msu.edu/crcmath/math/math/p/p195.htm
 # https://mathworld.wolfram.com/Pentaflake.html
 
+
 rotational_symmetry_radians = 2 * math.pi / 5
 rotational_symmetry_radians_2 = math.pi / 5
-phi = (1 + math.sqrt(5)) / 2
+rotational_symmetry_radians_2 = math.pi
+# phi = (1 + math.sqrt(5)) / 2
+
 class Pentagon(Polygon):
     """
     A class representing a pentagon.
@@ -25,7 +29,7 @@ class Pentagon(Polygon):
 
         super().__init__(vertices)
 
-class RegularPentagon(Pentagon):
+class RegularPentagon(RegularPolygon):
     """
     A class representing an Equilateral Pentagon.
 
@@ -35,64 +39,18 @@ class RegularPentagon(Pentagon):
         Initialize the RegularPentagon and generate the vertices based on Origin and circumradius.
         """
 
-        self.vertices = list()
-        for i in range(5):
-            self.vertices.append(
-                origin
-                + circumradius
-                * complex(
-                    math.cos(i * rotational_symmetry_radians),
-                    math.sin(i * rotational_symmetry_radians),
-                )
-            )
-        self.circumradius = circumradius
-
-    @property
-    def circumradius(self):
-        """
-        Getter function for the circumradius property of the pentagon
-        """
-        return self._circumradius
-
-    @circumradius.setter
-    def circumradius(self, circumradius):
-        """
-        Getter function for the circumradius property of the pentagon
-        """
-
-        self._circumradius = circumradius
-
-    @property
-    def center(self):
-        """
-        Return the position of the center of the rhombus formed from two
-        triangles joined by their bases.
-        """
-        return sum(self.vertices) / self.n
-
-    @property
-    def side_length(self):
-        """
-
-        """
-        # return 2*self.R*sin(math.pi/5)
-        return self.circumradius * math.sqrt((5 - math.sqrt(5)) / 2)
-
-    @property
-    def height(self):
-        # https://en.wikipedia.org/wiki/Pentagon#Regular_pentagons
-
-        # return self.side_length() * math.sqrt(5+2*math.sqrt(5)) / 2
-        # return self.circumradius * math.sqrt( (10 - 2 * math.sqrt(5)) * ( 5+ 2 * math.sqrt(5) ) / 4
-        # return self.circumradius * (30 + 10 * math.sqrt(5)) / 4
-        return 5 * self.circumradius * (3 + math.sqrt(5)) / 2
-
-    @property
-    def inradius(self):
-        # return self.side_length / (2 * math.tan(math.pi/5))
-        # return self.side_length / (2 * math.sqrt(5-math.sqrt(20)))
-        # return self.circumradius * phi / 2
-        return self.circumradius * (1 + math.sqrt(5)) / 4
+        # self.vertices = list()
+        # for i in range(5):
+        #     self.vertices.append(
+        #         origin
+        #         + circumradius
+        #         * complex(
+        #             math.cos(i * rotational_symmetry_radians),
+        #             math.sin(i * rotational_symmetry_radians),
+        #         )
+        #     )
+        # self.circumradius = circumradius
+        super().__init__(origin=origin, circumradius=circumradius, n=5)
 
 
     def path(self):
@@ -123,16 +81,6 @@ class RegularPentagon(Pentagon):
 
         """
         return self.__class__([vertex.conjugate() for vertex in self.vertices])
-
-
-    def rotate(self, theta, origin):
-        """Rotate the figure anti-clockwise by theta radians."""
-        rot = math.cos(theta) + 1j * math.sin(theta)
-        new_vertices = list()
-        for vertex in self.vertices:
-            new_vertices.append((vertex - origin) * rot + origin)
-        self.vertices = new_vertices
-        return self
 
 
 class PentaflakePentagon(RegularPentagon):
