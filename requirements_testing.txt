@@ -1,6 +1,14 @@
 tox
 pytest
+pytest-env          # plugin to allow passing environment variable to pytest environmentt
+pytest-cov          # Test coverage
+pytest-dotenv       # pytest will load .env automatically
+pytest-pythonpath   # Allow the addition of one or more paths to the PYTHONPATH environment variables
+pytest-xdist        #
+
+pytest-black
+pytest-reraise
+
 hypothesis
-black
 
 svg2rlg

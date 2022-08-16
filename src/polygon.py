@@ -2,6 +2,7 @@ import math
 
 from .helpers import get_random_HTML_color
 
+
 class Polygon:
     def __init__(self, vertices):
         self.vertices = vertices
@@ -9,6 +10,54 @@ class Polygon:
     @property
     def n(self):
         return len(self.vertices)
+
+    def translate(self, c: complex):
+        new_vertices = list()
+        for vertex in self.vertices:
+            new_vertices.append(vertex + c)
+        self.vertices = new_vertices
+        return self
+
+    def rotate(self, theta, origin):
+        """Rotate the figure anti-clockwise by theta radians."""
+        rot = math.cos(theta) + 1j * math.sin(theta)
+        new_vertices = list()
+        for vertex in self.vertices:
+            new_vertices.append((vertex - origin) * rot + origin)
+        self.vertices = new_vertices
+        return self
+
+    def scale(self, scale: complex):
+        new_vertices = list()
+        for vertex in self.vertices:
+            new_vertices.append(
+                complex(
+                    vertex.real / scale_factor.real, vertex.imag / scale_factor.imag
+                )
+            )
+        self.vertices = new_vertices
+        return self
+
+    @property
+    def bounding_box(self):
+        """
+        returns two points top left and bottom right
+
+        """
+        bounding_box_upper_left = self.vertices[0]
+        bounding_box_bottom_right = self.vertices[0]
+        for vertice in self.vertices[1:]:
+            if vertice.real > bounding_box_bottom_right.real:
+                bounding_box_bottom_right.real = vertice.real
+            if vertice.real < bounding_box_upper_left.real:
+                bounding_box_upper_left.real = vertice.real
+            if vertice.imag > bounding_box_upper_left.imag:
+                bounding_box_upper_left.imag = vertice.imag
+            if vertice.imag < bounding_box_bottom_right.imag:
+                bounding_box_bottom_right.imag = vertice.imag
+
+        return bounding_box_upper_left, bounding_box_bottom_right, width, height
+
 
 class RegularPolygon(Polygon):
     def __init__(self, origin, circumradius, n):
@@ -33,7 +82,6 @@ class RegularPolygon(Polygon):
         triangles joined by their bases.
         """
         return sum(self.vertices) / self.n
-    
 
     @property
     def circumradius(self):
@@ -48,25 +96,23 @@ class RegularPolygon(Polygon):
         Getter function for the circumradius property of the pentagon
         """
 
-        self._circumradius = circumradius        
+        self._circumradius = circumradius
 
     @property
     def inradius(self):
-        # https://en.wikipedia.org/wiki/Pentagon#Regular_pentagons        
-        return self.circumradius * math.cos(math.pi/self.n)
+        # https://en.wikipedia.org/wiki/Pentagon#Regular_pentagons
+        return self.circumradius * math.cos(math.pi / self.n)
         # return self.side_length / (2 * math.tan(math.pi/n))
 
     @property
     def side_length(self):
-        """
-        """
-        return 2 * self.circumradius * math.sin(math.pi/self.n)
+        """ """
+        return 2 * self.circumradius * math.sin(math.pi / self.n)
 
     @property
     def height(self):
         # https://en.wikipedia.org/wiki/Pentagon#Regular_pentagons
         return self.circumradius + self.inradius
-
 
     def path(self):
         """
@@ -87,7 +133,6 @@ class RegularPolygon(Polygon):
 
         return path
 
-    
     def make_svg(self, config={}):
         """Make and return the SVG for the tiling as a str."""
         self.config = {
@@ -99,7 +144,7 @@ class RegularPolygon(Polygon):
             "base-stroke-width": 5,
             "margin": 1.05,
             "tile-opacity": 1,
-            "random-tile-colors": True, 
+            "random-tile-colors": True,
         }
         self.config.update(config)
         self.config["width"] = str(self.config["width"])
@@ -115,9 +160,7 @@ class RegularPolygon(Polygon):
                 self.config["width"], self.config["height"], viewbox
             ),
         ]
-        stroke_width = str(
-            self.config["base-stroke-width"]
-        )
+        stroke_width = str(self.config["base-stroke-width"])
 
         svg.append(
             '<g style="stroke:{}; stroke-width: {};'
@@ -146,13 +189,4 @@ class RegularPolygon(Polygon):
             )
 
         svg.append("</g>\n</svg>")
-        return "\n".join(svg)        
-
-    def rotate(self, theta, origin):
-        """Rotate the figure anti-clockwise by theta radians."""
-        rot = math.cos(theta) + 1j * math.sin(theta)
-        new_vertices = list()
-        for vertex in self.vertices:
-            new_vertices.append((vertex - origin) * rot + origin)
-        self.vertices = new_vertices
-        return self
+        return "\n".join(svg)

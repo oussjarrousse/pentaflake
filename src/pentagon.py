@@ -1,7 +1,9 @@
-import math
 import cmath
-from .polygon import Polygon, RegularPolygon
-from helpers import phi
+import math
+
+from .helpers import phi
+from .polygon import Polygon
+from .polygon import RegularPolygon
 
 # References:
 # https://en.wikipedia.org/wiki/Pentagon#Regular_pentagons
@@ -14,12 +16,13 @@ rotational_symmetry_radians_2 = math.pi / 5
 rotational_symmetry_radians_2 = math.pi
 # phi = (1 + math.sqrt(5)) / 2
 
+
 class Pentagon(Polygon):
     """
     A class representing a pentagon.
 
     """
-    
+
     def __init__(self, vertices):
         """
         Initialize the triangle with the ordered vertices. A and C are the
@@ -29,11 +32,13 @@ class Pentagon(Polygon):
 
         super().__init__(vertices)
 
+
 class RegularPentagon(RegularPolygon):
     """
     A class representing an Equilateral Pentagon.
 
     """
+
     def __init__(self, origin, circumradius):
         """
         Initialize the RegularPentagon and generate the vertices based on Origin and circumradius.
@@ -51,7 +56,6 @@ class RegularPentagon(RegularPolygon):
         #     )
         # self.circumradius = circumradius
         super().__init__(origin=origin, circumradius=circumradius, n=5)
-
 
     def path(self):
         """
@@ -72,7 +76,6 @@ class RegularPentagon(RegularPolygon):
 
         return path
 
-
     def conjugate(self):
         """
         Return the vertices of the reflection of this pentagon about the
@@ -84,7 +87,7 @@ class RegularPentagon(RegularPolygon):
 
 
 class PentaflakePentagon(RegularPentagon):
-    
+
     mark = False
 
     def inflate(self):
@@ -126,7 +129,7 @@ class PentaflakePentagon(RegularPentagon):
             p5.rotate(rotational_symmetry_radians_2, c5)
             p5.mark = True
 
-        c6 = c1 + cmath.rect(d, cmath.phase(v) + 4 *rotational_symmetry_radians)
+        c6 = c1 + cmath.rect(d, cmath.phase(v) + 4 * rotational_symmetry_radians)
         p6 = PentaflakePentagon(c6, R)
         if self.mark == True:
             p6.rotate(rotational_symmetry_radians_2, c6)
