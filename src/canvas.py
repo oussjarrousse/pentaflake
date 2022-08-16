@@ -1,3 +1,4 @@
+from .helpers import get_random_HTML_color
 from .polygon import Polygon
 
 DISTRIBUTE_EVENLY_HORIZONTALLY = 2
@@ -27,9 +28,13 @@ class Canvas:
         for polygon in self.polygons[1:]:
             _, _, bounding_box_relative_to_origin = polygon.bounding_box
             if bounding_box_relative_to_origin.imag > big_enough_bounding_box.imag:
-                big_enough_bounding_box.imag = bounding_box_relative_to_origin.imag
+                big_enough_bounding_box = complex(
+                    big_enough_bounding_box.real, bounding_box_relative_to_origin.imag
+                )
             if bounding_box_relative_to_origin.real > big_enough_bounding_box.real:
-                big_enough_bounding_box.real = bounding_box_relative_to_origin
+                big_enough_bounding_box = complex(
+                    bounding_box_relative_to_origin.real, big_enough_bounding_box.imag
+                )
 
         # do we need to scale
         if big_enough_bounding_box.real > width_available:
@@ -91,25 +96,25 @@ class Canvas:
 
         # go over polygons and draw them
         for polygon in self.polygons:
-            for element in polygon.elements:
-                if self.config["draw-tiles"]:
-                    if self.config["random-tile-colors"]:
-                        tile_color = get_random_HTML_color()
-                    else:
-                        tile_color = self.config["tile_color"]
-                    svg.append(
-                        '<path fill="{}" fill-opacity="{}" d="{}"/>'.format(
-                            tile_color,
-                            self.config["tile-opacity"],
-                            self.path(),
-                        )
-                    )
+            # for vertice in polygon.vertices:
+            if self.config["draw-tiles"]:
+                if self.config["random-tile-colors"]:
+                    tile_color = get_random_HTML_color()
                 else:
-                    svg.append(
-                        '<path fill="none" d="{}"/>'.format(
-                            self.path(),
-                        )
+                    tile_color = self.config["tile_color"]
+                svg.append(
+                    '<path fill="{}" fill-opacity="{}" d="{}"/>'.format(
+                        tile_color,
+                        self.config["tile-opacity"],
+                        polygon.path(),
                     )
+                )
+            else:
+                svg.append(
+                    '<path fill="none" d="{}"/>'.format(
+                        polygon.path(),
+                    )
+                )
 
         svg.append("</g>\n</svg>")
         return "\n".join(svg)

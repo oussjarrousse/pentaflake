@@ -48,15 +48,27 @@ class Polygon:
         bounding_box_bottom_right = self.vertices[0]
         for vertice in self.vertices[1:]:
             if vertice.real > bounding_box_bottom_right.real:
-                bounding_box_bottom_right.real = vertice.real
+                bounding_box_bottom_right = complex(
+                    vertice.real, bounding_box_bottom_right.imag
+                )
             if vertice.real < bounding_box_upper_left.real:
-                bounding_box_upper_left.real = vertice.real
+                bounding_box_upper_left = complex(
+                    vertice.real, bounding_box_upper_left.imag
+                )
             if vertice.imag > bounding_box_upper_left.imag:
-                bounding_box_upper_left.imag = vertice.imag
+                bounding_box_upper_left = complex(
+                    bounding_box_upper_left.real, vertice.imag
+                )
             if vertice.imag < bounding_box_bottom_right.imag:
-                bounding_box_bottom_right.imag = vertice.imag
+                bounding_box_bottom_right = complex(
+                    bounding_box_bottom_right.real, vertice.imag
+                )
 
-        return bounding_box_upper_left, bounding_box_bottom_right, width, height
+        return (
+            bounding_box_upper_left,
+            bounding_box_bottom_right,
+            bounding_box_upper_left - bounding_box_bottom_right,
+        )
 
 
 class RegularPolygon(Polygon):
